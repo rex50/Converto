@@ -1,20 +1,27 @@
 package com.rex50.converto.data.repos.open_exchange
 
+import com.rex50.converto.data.datasources.remote.OpenExchangeRemoteDataSourceImpl
 import com.rex50.converto.data.datasources.remote.mappers.CurrenciesResponseMapper
-import com.rex50.converto.data.datasources.remote.services.OpenExchangeService
 import com.rex50.converto.data.models.CurrenciesRateResponse
-import org.json.JSONObject
+import com.rex50.converto.utils.Result
+import com.rex50.converto.utils.extensions.mapSafelyIfSuccess
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OpenExchangeRepoImpl
 @Inject
 constructor(
-    private val openExchangeService: OpenExchangeService
+    private val remoteDataSource: OpenExchangeRemoteDataSourceImpl,
+    private val responseMapper: CurrenciesResponseMapper
 ) : OpenExchangeRepo {
 
-    override suspend fun fetchCurrencies(): CurrenciesRateResponse {
-        val response = JSONObject(openExchangeService.fetchCurrencies("5d1100fd57f242b99c67a82dff45f33c").toString())
-        return CurrenciesResponseMapper.jsonToCurrenciesRateResponse(response)
-    }
+    override suspend fun fetchCurrencies(): Result<CurrenciesRateResponse> =
+        withContext(Dispatchers.IO) {
+            val response = remoteDataSource.fetchCurrenciesRate()
+            return@withContext response.mapSafelyIfSuccess {
+                responseMapper.jsonToCurrenciesRateResponse(it)
+            }
+        }
 
 }

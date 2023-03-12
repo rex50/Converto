@@ -6,7 +6,7 @@ import com.rex50.converto.utils.extensions.orZero
 import org.json.JSONObject
 import javax.inject.Inject
 
-object CurrenciesResponseMapper {
+class CurrenciesResponseMapper {
 
     fun jsonToCurrenciesRateResponse(jsonObject: JSONObject): CurrenciesRateResponse {
         jsonObject.apply {

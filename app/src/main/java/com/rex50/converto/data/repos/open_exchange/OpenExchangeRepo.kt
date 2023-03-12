@@ -1,7 +1,8 @@
 package com.rex50.converto.data.repos.open_exchange
 
 import com.rex50.converto.data.models.CurrenciesRateResponse
+import com.rex50.converto.utils.Result
 
 interface OpenExchangeRepo {
-    suspend fun fetchCurrencies(): CurrenciesRateResponse
+    suspend fun fetchCurrencies(): Result<CurrenciesRateResponse>
 }

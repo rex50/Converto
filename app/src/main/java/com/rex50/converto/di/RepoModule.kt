@@ -1,5 +1,7 @@
 package com.rex50.converto.di
 
+import com.rex50.converto.data.datasources.remote.OpenExchangeRemoteDataSourceImpl
+import com.rex50.converto.data.datasources.remote.mappers.CurrenciesResponseMapper
 import com.rex50.converto.data.datasources.remote.services.OpenExchangeService
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepoImpl
@@ -15,7 +17,12 @@ object RepoModule {
 
     @Provides
     @Singleton
-    fun providesOpenExchangeRepo(openExchangeService: OpenExchangeService): OpenExchangeRepo =
-        OpenExchangeRepoImpl(openExchangeService)
+    fun providesOpenExchangeRepo(
+        remoteDataSource: OpenExchangeRemoteDataSourceImpl,
+        mapper: CurrenciesResponseMapper
+    ): OpenExchangeRepo = OpenExchangeRepoImpl(
+        remoteDataSource,
+        mapper
+    )
 
 }
