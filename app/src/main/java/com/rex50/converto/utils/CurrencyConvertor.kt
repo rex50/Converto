@@ -15,7 +15,7 @@ class CurrencyConvertor {
             val rate = when {
                 fromCurrency.currency.equals(base, ignoreCase = true) -> fromCurrency.rate * toCurrency.rate
                 toCurrency.currency.equals(base, ignoreCase = true) -> toCurrency.rate * fromCurrency.rate
-                else -> fromCurrency.rate / toCurrency.rate
+                else -> toCurrency.rate / fromCurrency.rate
             }
             return rate*it
         }

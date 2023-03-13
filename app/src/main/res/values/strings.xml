@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Converto</string>
+    <string name="from_currency">From</string>
+    <string name="to_currency">To</string>
+    <string name="other_conversions">Other conversions</string>
+    <string name="amount_placeholder">0.0</string>
 </resources>
