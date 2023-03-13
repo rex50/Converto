@@ -74,7 +74,7 @@ fun CurrencyListItemPreview() {
             CurrencyListItem(
                 currency = currency
             ) {
-                CurrencyFormatter().format(currency)
+                CurrencyFormatter().format(currency.convertedCurrency, currency.currency)
             }
         }
     }

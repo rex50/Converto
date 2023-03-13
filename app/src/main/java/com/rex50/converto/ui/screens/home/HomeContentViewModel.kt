@@ -7,6 +7,7 @@ import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
 import com.rex50.converto.data.repos.user.UserSelectionRepo
 import com.rex50.converto.ui.models.Currency
 import com.rex50.converto.utils.CurrencyConvertor
+import com.rex50.converto.utils.CurrencyFormatter
 import com.rex50.converto.utils.Data
 import com.rex50.converto.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,8 @@ class HomeContentViewModel
 constructor(
     private val openExchangeRepo: OpenExchangeRepo,
     private val userSelectionRepo: UserSelectionRepo,
-    private val currencyConvertor: CurrencyConvertor
+    private val currencyConvertor: CurrencyConvertor,
+    private val currencyFormatter: CurrencyFormatter
 ) : ViewModel() {
 
     companion object {
@@ -133,11 +135,7 @@ constructor(
      * For formatting currency to display
      */
     fun getFormattedCurrencyAmount(amount: Double?, currencyCode: String): String {
-        return NumberFormat.getCurrencyInstance().let { currencyFormatter ->
-            currencyFormatter.maximumFractionDigits = 2
-            currencyFormatter.currency = java.util.Currency.getInstance(currencyCode)
-            amount?.let { currencyFormatter.format(it) } ?: "0.0"
-        }
+        return currencyFormatter.format(amount, currencyCode)
     }
 
     private suspend fun updateUserLastSessionData(updatedCurrencies: MutableList<Currency>) {
