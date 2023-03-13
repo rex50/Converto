@@ -8,6 +8,8 @@ buildscript {
         lifecycle_version = '2.5.1'
         prefs_version = "1.10.0"
         joda_version = "2.10.3"
+
+        mockkVersion = "1.13.4"
     }
     dependencies {
         // NOTE: Do not place your application dependencies here; they belong
