@@ -1,5 +1,7 @@
 package com.rex50.converto.di
 
+import com.rex50.converto.data.datasources.local.prefs.OpenExchangeLocalDataSourceImpl
+import com.rex50.converto.data.datasources.local.prefs.UserSelectionLocalDataSourceImpl
 import com.rex50.converto.data.datasources.remote.OpenExchangeRemoteDataSourceImpl
 import com.rex50.converto.data.datasources.remote.services.OpenExchangeService
 import dagger.Module
@@ -14,7 +16,16 @@ object DataSourceModule {
 
     @Provides
     @Singleton
-    fun providesOpenExchangeDataSource(openExchangeService: OpenExchangeService) =
+    fun providesOpenExchangeRemoteDataSource(openExchangeService: OpenExchangeService) =
         OpenExchangeRemoteDataSourceImpl(openExchangeService)
+
+    @Singleton
+    @Provides
+    fun providesOpenExchangeLocalDataSource() = OpenExchangeLocalDataSourceImpl()
+
+
+    @Singleton
+    @Provides
+    fun providesUserSelectionLocalDataSource() = UserSelectionLocalDataSourceImpl()
 
 }

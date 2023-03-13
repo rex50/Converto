@@ -18,9 +18,8 @@ constructor(
 ) {
 
     suspend fun fetchCurrenciesRate(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        //val response = openExchangeService.fetchCurrencies("5d1100fd57f242b99c67a82dff45f33c")
-        delay(2000)
-        return@withContext Response.success("").mapSafelyToResult {
+        val response = openExchangeService.fetchCurrencies("5d1100fd57f242b99c67a82dff45f33c")
+        return@withContext response.mapSafelyToResult {
             JSONObject(DEMO_RESPONSE)
         }
     }

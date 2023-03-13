@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
+import com.rex50.converto.data.repos.user.UserSelectionRepo
 import com.rex50.converto.ui.models.Currency
 import com.rex50.converto.utils.CurrencyConvertor
 import com.rex50.converto.utils.Data
@@ -22,6 +23,7 @@ class HomeContentViewModel
 @Inject
 constructor(
     private val openExchangeRepo: OpenExchangeRepo,
+    private val userSelectionRepo: UserSelectionRepo,
     private val currencyConvertor: CurrencyConvertor
 ) : ViewModel() {
 
@@ -57,8 +59,12 @@ constructor(
                         rate = it.value
                     )
                 }.toMutableList().let { updatedCurrencies ->
+
+                    updateUserLastSessionData(updatedCurrencies)
+
                     updatedCurrencies.updateConvertedAmount()
                         .sortByCurrency()
+
                     _currencies.value = Data.Successful(updatedCurrencies)
                 }
             }
@@ -99,6 +105,7 @@ constructor(
      * Changes first currency and recalculates the conversion amount for the second currency
      */
     fun changeSelectedFromCurrency(currency: Currency) = viewModelScope.launch {
+        userSelectionRepo.storeSelectedFromCurrency(currency.currency)
         _selectedFromCurrency.value = currency
         _selectedToCurrency.value = _selectedToCurrency.value.also {
             it.updateConversion(
@@ -113,6 +120,7 @@ constructor(
      * Changes second currency and recalculates conversion amount
      */
     fun changeSelectedToCurrency(currency: Currency) = viewModelScope.launch {
+        userSelectionRepo.storeSelectedToCurrency(currency.currency)
         _selectedToCurrency.value = currency.also {
             it.updateConversion(
                 fromCurrency = _selectedFromCurrency.value,
@@ -130,6 +138,20 @@ constructor(
             currencyFormatter.currency = java.util.Currency.getInstance(currencyCode)
             amount?.let { currencyFormatter.format(it) } ?: "0.0"
         }
+    }
+
+    private suspend fun updateUserLastSessionData(updatedCurrencies: MutableList<Currency>) {
+        val fromCode = userSelectionRepo.getLastSelectedFromCurrency()
+        if(fromCode.isNotBlank())
+            updatedCurrencies.find { it.currency == fromCode }?.let {
+                changeSelectedFromCurrency(it)
+            }
+
+        val toCode = userSelectionRepo.getLastSelectedToCurrency()
+        if(toCode.isNotBlank())
+            updatedCurrencies.find { it.currency == toCode }?.let {
+                changeSelectedToCurrency(it)
+            }
     }
 
     /**

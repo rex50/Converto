@@ -23,7 +23,7 @@ fun <Type: Any, ReturnType: Any> Response<Type>.mapSafelyToResult(transform: (Ty
     }
 }
 
-fun <Type: Any, ReturnType: Any> Result<Type>.mapSafelyIfSuccess(transform: (Type) -> ReturnType): Result<ReturnType> {
+suspend fun <Type: Any, ReturnType: Any> Result<Type>.mapSafelyIfSuccess(transform: suspend (Type) -> ReturnType): Result<ReturnType> {
     return when(this) {
         is Result.Success -> try {
             Result.Success(transform(this.data))
