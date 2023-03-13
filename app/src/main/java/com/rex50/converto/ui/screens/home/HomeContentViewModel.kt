@@ -57,7 +57,9 @@ constructor(
                         rate = it.value
                     )
                 }.toMutableList().let { updatedCurrencies ->
-                    _currencies.value = Data.Successful(updatedCurrencies.sortByCurrency())
+                    updatedCurrencies.updateConvertedAmount()
+                        .sortByCurrency()
+                    _currencies.value = Data.Successful(updatedCurrencies)
                 }
             }
 
