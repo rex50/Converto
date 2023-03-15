@@ -1,10 +1,8 @@
 package com.rex50.converto.data.datasources.remote.mappers
 
-import com.google.gson.Gson
 import com.rex50.converto.data.models.CurrenciesRateResponse
 import com.rex50.converto.utils.extensions.orZero
 import org.json.JSONObject
-import javax.inject.Inject
 
 class CurrenciesResponseMapper {
 

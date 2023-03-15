@@ -12,11 +12,11 @@ class CurrencyConvertor {
         amountTobeConverted: Double?
     ): Double? {
         return amountTobeConverted?.let {
-            val rate = when {
-                fromCurrency.currency.equals(base, ignoreCase = true) -> fromCurrency.rate * toCurrency.rate
-                toCurrency.currency.equals(base, ignoreCase = true) -> toCurrency.rate * fromCurrency.rate
-                else -> toCurrency.rate / fromCurrency.rate
-            }
+            val rate = if(fromCurrency.currency.equals(base, ignoreCase = true))
+                fromCurrency.rate * toCurrency.rate
+            else
+                toCurrency.rate / fromCurrency.rate
+
             return rate*it
         }
     }
