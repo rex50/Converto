@@ -12,7 +12,10 @@ class CurrencyFormatter {
                 currencyFormatter.currency = it
                 symbol = it.symbol
             }
-            amount?.let { currencyFormatter.format(it) } ?: "${symbol}0.00"
+            amount?.let {
+                currencyFormatter.format(it)
+                    .replace(currencyCode, "")
+            } ?: "${symbol}0.00"
         }
     }
 
