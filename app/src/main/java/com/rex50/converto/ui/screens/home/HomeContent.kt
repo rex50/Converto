@@ -22,7 +22,7 @@ enum class CardType {
     FROM, TO
 }
 
-private object Keys{
+private object Keys {
     const val LOADER = "loader"
     const val TO_CARD = "To card"
     const val OTHER_CONVERSIONS = "Other conversions"
@@ -49,7 +49,7 @@ fun HomeContent(
 
     ConstraintLayout {
 
-        val (header, cardFromCurrency, listCurrenciesRefs) = createRefs()
+        val (header, conversionRateCard, cardFromCurrency, listCurrenciesRefs) = createRefs()
 
         Header(
             title = stringResource(id = R.string.app_name),
@@ -65,6 +65,25 @@ fun HomeContent(
             viewModel.fetchCurrencies()
         }
 
+        // Conversion rate text
+        SimpleTextBannerCard(
+            text = viewModel.getFormattedConversionRate(
+                fromCurrency = selectedFromCurrency,
+                toCurrency = selectedToCurrency
+            ),
+            modifier = Modifier
+                .padding(
+                    vertical = 4.dp,
+                    horizontal = 16.dp
+                )
+                .constrainAs(conversionRateCard) {
+                    top.linkTo(header.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+        )
+
         // From card - where user can enter amount
         ConversionAmountCard(
             label = stringResource(R.string.from_currency),
@@ -78,9 +97,12 @@ fun HomeContent(
                 showCurrencyChanger = true
             },
             modifier = Modifier
-                .padding(16.dp)
+                .padding(
+                    vertical = 8.dp,
+                    horizontal = 16.dp
+                )
                 .constrainAs(cardFromCurrency) {
-                    top.linkTo(header.bottom)
+                    top.linkTo(conversionRateCard.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
@@ -90,7 +112,7 @@ fun HomeContent(
         LazyColumn(
             modifier = Modifier
                 .constrainAs(listCurrenciesRefs) {
-                    top.linkTo(cardFromCurrency.bottom)
+                    top.linkTo(cardFromCurrency.bottom, 8.dp)
                     start.linkTo(parent.start, 16.dp)
                     end.linkTo(parent.end, 16.dp)
                     bottom.linkTo(parent.bottom)
@@ -153,14 +175,13 @@ fun HomeContent(
                                 result.data[index].apply {
                                     CurrencyListItem(
                                         currency = this,
-                                        modifier = Modifier
-                                            .animateItemPlacement()
-                                    ) {
-                                        viewModel.getFormattedCurrencyAmount(
+                                        formattedAmount = viewModel.getFormattedCurrencyAmount(
                                             amount = convertedCurrency,
                                             currencyCode = currency
-                                        )
-                                    }
+                                        ),
+                                        modifier = Modifier
+                                            .animateItemPlacement()
+                                    )
                                 }
                             }
                         }

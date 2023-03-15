@@ -20,7 +20,7 @@ import com.rex50.converto.utils.CurrencyFormatter
 fun CurrencyListItem(
     modifier: Modifier = Modifier,
     currency: Currency,
-    amountFormatter: () -> String,
+    formattedAmount: String,
 ) {
     Card(
         modifier = modifier
@@ -46,7 +46,7 @@ fun CurrencyListItem(
 
                 convertedCurrency?.takeIf { it != 0.0 }?.let {
                     Text(
-                        text = amountFormatter(),
+                        text = formattedAmount,
                         fontWeight = FontWeight.Medium,
                         style = MaterialTheme.typography.titleMedium.copy(
                             color = MaterialTheme.colorScheme.secondary
@@ -72,10 +72,9 @@ fun CurrencyListItemPreview() {
         Surface {
             val currency = Currency(convertedCurrency = 1000.0)
             CurrencyListItem(
-                currency = currency
-            ) {
-                CurrencyFormatter().format(currency.convertedCurrency, currency.currency)
-            }
+                currency = currency,
+                formattedAmount = CurrencyFormatter().format(currency.convertedCurrency, currency.currency)
+            )
         }
     }
 }

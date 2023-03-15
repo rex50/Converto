@@ -1,6 +1,7 @@
 package com.rex50.converto.ui.screens.home
 
 import android.util.Log
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
@@ -136,6 +137,20 @@ constructor(
      */
     fun getFormattedCurrencyAmount(amount: Double?, currencyCode: String): String {
         return currencyFormatter.format(amount, currencyCode)
+    }
+
+    fun getFormattedConversionRate(fromCurrency: Currency, toCurrency: Currency): String {
+        val conversionRate = currencyConvertor.convertAmount(
+            fromCurrency,
+            toCurrency,
+            amountTobeConverted = 1.0
+        )
+        val currencyCodeFrom = fromCurrency.currency
+        val currencyCodeTo = toCurrency.currency
+        return "${getFormattedCurrencyAmount(1.0, currencyCodeFrom)} " +
+                currencyCodeFrom +
+                " equals ${getFormattedCurrencyAmount(conversionRate, currencyCodeTo)} " +
+                currencyCodeTo
     }
 
     private suspend fun updateUserLastSessionData(updatedCurrencies: MutableList<Currency>) {
