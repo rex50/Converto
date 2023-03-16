@@ -8,6 +8,7 @@ import com.rex50.converto.utils.Result
 import com.rex50.converto.utils.extensions.mapSafelyIfSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.joda.time.DateTime
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -27,29 +28,32 @@ constructor(
         withContext(Dispatchers.IO) {
             val lastUpdateTime = localDataSource.fetchLastUpdateTime()
 
-            val localData = if(lastUpdateTime.plusHours(DATA_VALIDITY_HOURS).isAfterNow) {
-                localDataSource.fetchCurrenciesResponse()
-            } else {
-                localDataSource.storeCurrenciesResponse(JSONObject())
-                null
-            }
+            val localData = getLocalDataIfNotExpired(lastUpdateTime)
 
-            val response = if(localData != null)
-                Result.Success(localData)
-            else
-                remoteDataSource.fetchCurrenciesRate()
+            val response = localData?.let { Result.Success(it) }
+                ?: remoteDataSource.fetchCurrenciesRate()
 
             return@withContext response.mapSafelyIfSuccess {
                 // Update local
-                if(localData == null) {
-                    localDataSource.apply {
-                        storeCurrenciesResponse(it)
-                        updateLastUpdateTimeToNow()
-                    }
+                if (localData == null) {
+                    updateLocalData(response = it)
                 }
 
                 responseMapper.jsonToCurrenciesRateResponse(it)
             }
+        }
+
+    private suspend fun updateLocalData(response: JSONObject) = localDataSource.apply {
+        storeCurrenciesResponse(response)
+        updateLastUpdateTimeToNow()
+    }
+
+    private suspend fun getLocalDataIfNotExpired(lastUpdateTime: DateTime): JSONObject? =
+        if (lastUpdateTime.plusHours(DATA_VALIDITY_HOURS).isAfterNow) {
+            localDataSource.fetchCurrenciesResponse()
+        } else {
+            localDataSource.storeCurrenciesResponse(JSONObject())
+            null
         }
 
 }

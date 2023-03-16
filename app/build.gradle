@@ -93,9 +93,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation "androidx.fragment:fragment-ktx:1.5.5"
 
-    // EasyPrefs - Prefs Manager
-    implementation "com.pixplicity.easyprefs:EasyPrefs:$prefs_version"
-
     // Joda - DateTime Utils
     implementation "net.danlew:android.joda:$joda_version"
 
