@@ -16,6 +16,9 @@ android {
         versionCode 1
         versionName "1.0"
 
+        buildConfigField "String", "OPEN_EXCHANGE_SERVICE_URL", "\"https://openexchangerates.org/api/\""
+        buildConfigField "String", "OPEN_EXCHANGE_SERVICE_KEY", "\"5d1100fd57f242b99c67a82dff45f33c\""
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
