@@ -1,6 +1,7 @@
-package com.rex50.converto.data.local.prefs
+package com.rex50.converto.data.datasources.local.prefs
 
 import android.content.Context
+import com.rex50.converto.TestUtils.initJodaTimeAndroid
 import com.rex50.converto.data.datasources.local.prefs.OpenExchangeLocalDataSourceImpl
 import com.rex50.converto.data.datasources.local.prefs.SharedPrefsKeys
 import io.mockk.every
@@ -60,7 +61,7 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
 
     @Test
     fun `fetchLastUpdateTime returns DateTime for any long`() = runBlocking {
-        initJodaTimeAndroid()
+        initJodaTimeAndroid(context)
         val millis: Long = 0
         mockkEveryPrefsGetLongReturns(millis)
 
@@ -69,7 +70,7 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
 
     @Test
     fun `updateLastUpdateTimeToNow stores current DateTime millis in long`() = runBlocking {
-        initJodaTimeAndroid()
+        initJodaTimeAndroid(context)
         mockkEveryPrefsPutLong()
         // DateTime constructor for exact millis when now() is called
         mockkConstructor(DateTime::class)
@@ -81,10 +82,5 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
         assertEquals(DateTime.now().millis, storedLong?.second)
     }
 
-    /**
-     * Joda date time needs to initialized before using DateTime
-     */
-    private fun initJodaTimeAndroid() {
-        JodaTimeAndroid.init(context)
-    }
+
 }

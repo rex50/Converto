@@ -42,7 +42,7 @@ object NetworkModule {
             .build()
 
     @Provides
-    fun getLogging(): HttpLoggingInterceptor = HttpLoggingInterceptor().also {
+    fun providesLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().also {
         it.level = HttpLoggingInterceptor.Level.BODY
     }
 }

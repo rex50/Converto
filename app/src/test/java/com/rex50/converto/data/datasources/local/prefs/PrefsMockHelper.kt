@@ -1,4 +1,4 @@
-package com.rex50.converto.data.local.prefs
+package com.rex50.converto.data.datasources.local.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
