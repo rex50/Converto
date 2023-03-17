@@ -227,8 +227,7 @@ constructor(
      * Checks and removes spaces and hyphens
      */
     private fun String.removeSpaceAndHyphen(): String {
-        return replace(" ", "")
-            .replace("-", "")
+        return replace("[^0-9\\,\\.]".toRegex(), "")
     }
 
     /**
@@ -243,10 +242,7 @@ constructor(
      * Checks and removes selected characters
      */
     private fun String.removeInitialNonNumerical(): String {
-        return when(takeIf { length == 1 }?.get(0)) {
-            '0', '-', ' ', ',', '.' -> ""
-            else -> this
-        }
+        return takeIf { length == 1 }?.replace("[^0-9]".toRegex(), "") ?: this
     }
 
 }
