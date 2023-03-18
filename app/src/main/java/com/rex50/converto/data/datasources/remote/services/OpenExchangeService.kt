@@ -9,14 +9,14 @@ interface OpenExchangeService {
 
     @GET(Endpoints.LATEST_RATES)
     suspend fun fetchLatestRates(
-        @Query("app_id") appId: String,
-        @Query("prettyprint") prettyPrint: Boolean = false
+        @Query(Params.APP_ID) appId: String,
+        @Query(Params.PRETTY_PRINT) prettyPrint: Boolean = false
     ): Response<JsonElement>
 
     @GET(Endpoints.ALL_CURRENCIES)
     suspend fun fetchCurrencies(
-        @Query("app_id") appId: String,
-        @Query("prettyprint") prettyPrint: Boolean = false
+        @Query(Params.APP_ID) appId: String,
+        @Query(Params.PRETTY_PRINT) prettyPrint: Boolean = false
     ): Response<JsonElement>
 
 }
