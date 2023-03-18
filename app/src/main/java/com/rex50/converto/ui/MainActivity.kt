@@ -6,10 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.rex50.converto.ui.screens.home.HomeContent
 import com.rex50.converto.ui.theme.ConvertoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +16,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ConvertoTheme {
+            ConvertoTheme(
+                darkTheme = true
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -29,18 +28,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name! 🔥")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ConvertoTheme {
-        Greeting("Android")
     }
 }
