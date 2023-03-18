@@ -5,9 +5,11 @@ import com.rex50.converto.data.datasources.local.prefs.SharedPrefsKeys
 import com.rex50.converto.data.datasources.local.prefs.UserSelectionLocalDataSourceImpl
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class UserSelectionLocalDataSourceImplTest: PrefsMockHelper() {
 
     override val context: Context = mockk(relaxed = true)
@@ -17,7 +19,7 @@ class UserSelectionLocalDataSourceImplTest: PrefsMockHelper() {
     }
 
     @Test
-    fun `storeSelectedFromCurrency stores currencyCode correctly`() = runBlocking {
+    fun `storeSelectedFromCurrency stores currencyCode correctly`() = runTest {
         mockkEveryPrefsPutString()
         val currencyCode = "INR"
 
@@ -28,7 +30,7 @@ class UserSelectionLocalDataSourceImplTest: PrefsMockHelper() {
     }
 
     @Test
-    fun `getSelectedFromCurrency returns currency code without any error`() = runBlocking {
+    fun `getSelectedFromCurrency returns currency code without any error`() = runTest {
         val currencyCode = "INR"
         mockkEveryPrefsGetStringReturns(currencyCode)
 
@@ -38,7 +40,7 @@ class UserSelectionLocalDataSourceImplTest: PrefsMockHelper() {
     }
 
     @Test
-    fun `storeSelectedToCurrency stores currencyCode correctly`() = runBlocking {
+    fun `storeSelectedToCurrency stores currencyCode correctly`() = runTest {
         mockkEveryPrefsPutString()
         val currencyCode = "JPY"
 
@@ -49,7 +51,7 @@ class UserSelectionLocalDataSourceImplTest: PrefsMockHelper() {
     }
 
     @Test
-    fun `getSelectedToCurrency returns currency code without any error`() = runBlocking {
+    fun `getSelectedToCurrency returns currency code without any error`() = runTest {
         val currencyCode = "JPY"
         mockkEveryPrefsGetStringReturns(currencyCode)
 

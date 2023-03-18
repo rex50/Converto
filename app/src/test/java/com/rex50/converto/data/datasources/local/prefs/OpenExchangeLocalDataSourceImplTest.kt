@@ -8,13 +8,16 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.DateTime
 import org.json.JSONObject
 import org.junit.Test
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
 
     override val context = mockk<Context>(relaxed = true)
@@ -24,7 +27,7 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
     }
 
     @Test
-    fun `When local data is empty fetchCurrenciesResponse returns null`() = runBlocking {
+    fun `When local data is empty fetchCurrenciesResponse returns null`() = runTest {
         mockkEveryPrefsGetStringReturns("")
         val response1 = localDataSource.fetchCurrenciesResponse()
         assertEquals(null, response1)
@@ -35,21 +38,21 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
     }
 
     @Test
-    fun `When local json data is malformed fetchCurrenciesResponse returns null`() = runBlocking {
+    fun `When local json data is malformed fetchCurrenciesResponse returns null`() = runTest {
         mockkEveryPrefsGetStringReturns("{dsaf:dds:}")
         val response = localDataSource.fetchCurrenciesResponse()
         assertEquals(null, response)
     }
 
     @Test
-    fun `When local json data is present fetchCurrenciesResponse returns JSONObject`() = runBlocking {
+    fun `When local json data is present fetchCurrenciesResponse returns JSONObject`() = runTest {
         mockkEveryPrefsGetStringReturns("{num: 1}")
         val isJSONObject = localDataSource.fetchCurrenciesResponse() is JSONObject
         assertEquals(true, isJSONObject)
     }
 
     @Test
-    fun `storeCurrenciesResponse converts and stores JSONObject in string`() = runBlocking {
+    fun `storeCurrenciesResponse converts and stores JSONObject in string`() = runTest {
         mockkEveryPrefsPutString()
         val jsonObject = JSONObject("{num: 1}")
 
@@ -60,7 +63,7 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
     }
 
     @Test
-    fun `fetchLastUpdateTime returns DateTime for any long`() = runBlocking {
+    fun `fetchLastUpdateTime returns DateTime for any long`() = runTest {
         initJodaTimeAndroid(context)
         val millis: Long = 0
         mockkEveryPrefsGetLongReturns(millis)
@@ -69,7 +72,7 @@ class OpenExchangeLocalDataSourceImplTest : PrefsMockHelper() {
     }
 
     @Test
-    fun `updateLastUpdateTimeToNow stores current DateTime millis in long`() = runBlocking {
+    fun `updateLastUpdateTimeToNow stores current DateTime millis in long`() = runTest {
         initJodaTimeAndroid(context)
         mockkEveryPrefsPutLong()
         // DateTime constructor for exact millis when now() is called

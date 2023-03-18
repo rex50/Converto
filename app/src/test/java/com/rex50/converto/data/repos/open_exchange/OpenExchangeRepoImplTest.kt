@@ -13,30 +13,31 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.unmockkAll
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.joda.time.DateTime
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class OpenExchangeRepoImplTest {
 
     private val context = mockk<Context>(relaxed = true)
     private val remoteDataSource = mockk<OpenExchangeRemoteDataSourceImpl>()
     private val localDataSource = mockk<OpenExchangeLocalDataSourceImpl>(relaxed = true)
-
-    private val localDataSourceResponse = JSONObject(MockResponses.successStringWith3Rates)
-    private val localDataSourceRateListSize = countRatesCount(localDataSourceResponse)
-    private val remoteDataSourceResponse = JSONObject(MockResponses.successStringWith5Rates)
-    private val remoteDataSourceRateListSize = countRatesCount(remoteDataSourceResponse)
-
-
     private val repo = OpenExchangeRepoImpl(
         remoteDataSource = remoteDataSource,
         localDataSource = localDataSource,
         responseMapper = CurrenciesResponseMapper()
     )
+    
+    private val localDataSourceResponse = JSONObject(MockResponses.successStringWith3Rates)
+    private val localDataSourceRateListSize = countRatesCount(localDataSourceResponse)
+    private val remoteDataSourceResponse = JSONObject(MockResponses.successStringWith5Rates)
+    private val remoteDataSourceRateListSize = countRatesCount(remoteDataSourceResponse)
 
     @Before
     fun `mock and stub`() {
@@ -48,9 +49,9 @@ class OpenExchangeRepoImplTest {
             remoteDataSourceResponse
         )
     }
-
+    
     @Test
-    fun `fetchCurrencies returns local data when available and not expired`() = runBlocking {
+    fun `fetchCurrencies returns local data when available and not expired`() = runTest {
         val result = repo.fetchCurrencies()
 
         coVerify { localDataSource.fetchCurrenciesResponse() }
@@ -60,7 +61,7 @@ class OpenExchangeRepoImplTest {
     }
 
     @Test
-    fun `fetchCurrencies returns remote data when local data is not available`() = runBlocking {
+    fun `fetchCurrencies returns remote data when local data is not available`() = runTest {
         coEvery { localDataSource.fetchCurrenciesResponse() } returns null
         val result = repo.fetchCurrencies()
 
@@ -70,7 +71,7 @@ class OpenExchangeRepoImplTest {
     }
 
     @Test
-    fun `fetchCurrencies returns remote data when local data is expired`() = runBlocking {
+    fun `fetchCurrencies returns remote data when local data is expired`() = runTest {
         coEvery { localDataSource.fetchLastUpdateTime() } returns DateTime.now().minusHours(4)
         val result = repo.fetchCurrencies()
 
