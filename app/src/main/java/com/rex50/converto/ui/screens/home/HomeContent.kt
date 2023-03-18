@@ -165,7 +165,7 @@ fun HomeContent(
                             defaultTransitionDuration = 150
                         ) {
                             Text(
-                                text = stringResource(R.string.other_conversions),
+                                text = stringResource(R.string.other_conversions, selectedFromCurrency.currency),
                                 fontWeight = FontWeight.Medium,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     color = MaterialTheme.colorScheme.primary
