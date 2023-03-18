@@ -51,7 +51,7 @@ private fun <T> SheetContent(
     MaterialTheme {
         Surface(
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxSize()
+            //modifier = Modifier.fillMaxSize()
         ) {
             val listState = rememberLazyListState()
 

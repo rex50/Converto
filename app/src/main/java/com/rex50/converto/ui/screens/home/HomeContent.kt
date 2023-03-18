@@ -1,8 +1,12 @@
 package com.rex50.converto.ui.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -39,13 +43,9 @@ fun HomeContent(
     val selectedFromCurrency by viewModel.selectedFromCurrency.collectAsState()
     val selectedToCurrency by viewModel.selectedToCurrency.collectAsState()
 
-    var changingCurrencyForCard by remember {
-        mutableStateOf(CardType.FROM)
-    }
-
-    var showCurrencyChanger by remember {
-        mutableStateOf(false)
-    }
+    var changingCurrencyForCard by remember { mutableStateOf(CardType.FROM) }
+    var showCurrencyChanger by remember { mutableStateOf(false) }
+    var showInfoSheet by remember { mutableStateOf(false) }
 
     ConstraintLayout {
 
@@ -54,7 +54,12 @@ fun HomeContent(
         Header(
             title = stringResource(id = R.string.app_name),
             modifier = Modifier
-                .padding(16.dp)
+                .padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 8.dp
+                )
                 .constrainAs(header) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -62,7 +67,7 @@ fun HomeContent(
                     width = Dimension.fillToConstraints
                 }
         ) {
-            viewModel.fetchCurrencies()
+            showInfoSheet = true
         }
 
         // Conversion rate text
@@ -199,7 +204,11 @@ fun HomeContent(
 
                 item {
                     DefaultAnimatedVisibility(result is Data.Error) {
-                        Text(text = (result as Data.Error).message)
+                        if(result is Data.Error) {
+                            ErrorCard(message = result.message) {
+                                viewModel.fetchCurrencies()
+                            }
+                        }
                     }
                 }
             }
@@ -229,5 +238,11 @@ fun HomeContent(
                 showCurrencyChanger = false
             }
         )
+    }
+
+    if(showInfoSheet) {
+        AboutSheet() {
+            showInfoSheet = false
+        }
     }
 }
