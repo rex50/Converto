@@ -67,6 +67,7 @@ fun HomeContent(
 
         // Conversion rate text
         SimpleTextBannerCard(
+            isVisible = currencies is Data.Successful,
             text = viewModel.getFormattedConversionRate(
                 fromCurrency = selectedFromCurrency,
                 toCurrency = selectedToCurrency
@@ -121,74 +122,84 @@ fun HomeContent(
                 }
         ) {
             currencies.let { result ->
-                when (result) {
 
-                    is Data.Loading -> item(key = Keys.LOADER) {
+                item(key = Keys.LOADER) {
+                    if (result is Data.Loading) {
                         SimpleContentLoader(
                             modifier = Modifier.animateItemPlacement()
                         )
                     }
+                }
 
-                    is Data.Successful -> {
-                        item(
-                            key = Keys.TO_CARD
+                // To card - where user can see the conversion amount
+                item(
+                    key = Keys.TO_CARD
+                ) {
+                    DefaultAnimatedVisibility(result is Data.Successful) {
+                        ConversionAmountCard(
+                            label = stringResource(R.string.to_currency),
+                            selectedCurrency = selectedToCurrency,
+                            amount = viewModel.getFormattedCurrencyAmount(
+                                amount = selectedToCurrency.convertedCurrency,
+                                currencyCode = selectedToCurrency.currency
+                            ),
+                            enabled = false,
+                            onChangeAmount = {},
+                            onChangeCurrency = {
+                                changingCurrencyForCard = CardType.TO
+                                showCurrencyChanger = true
+                            },
+                            modifier = Modifier.animateItemPlacement()
+                        )
+                    }
+                }
+
+
+                if (result is Data.Successful) {
+                    // Also show other conversions, if user has entered any amount
+                    item(
+                        key = Keys.OTHER_CONVERSIONS
+                    ) {
+                        DefaultAnimatedVisibility(
+                            isVisible = amountToBeConverted.isNotBlank(),
+                            defaultTransitionDuration = 150
                         ) {
-                            // To card - where user can see the conversion amount
-                            ConversionAmountCard(
-                                label = stringResource(R.string.to_currency),
-                                selectedCurrency = selectedToCurrency,
-                                amount = viewModel.getFormattedCurrencyAmount(
-                                    amount = selectedToCurrency.convertedCurrency,
-                                    currencyCode = selectedToCurrency.currency
+                            Text(
+                                text = stringResource(R.string.other_conversions),
+                                fontWeight = FontWeight.Medium,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = MaterialTheme.colorScheme.primary
                                 ),
-                                enabled = false,
-                                onChangeAmount = {},
-                                onChangeCurrency = {
-                                    changingCurrencyForCard = CardType.TO
-                                    showCurrencyChanger = true
-                                },
-                                modifier = Modifier.animateItemPlacement()
+                                modifier = Modifier
+                                    .padding(top = 24.dp)
+                                    .animateItemPlacement()
                             )
-                        }
-
-                        // Also show other conversions, if user has entered any amount
-                        if (amountToBeConverted.isNotBlank()) {
-                            item(
-                                key = Keys.OTHER_CONVERSIONS
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.other_conversions),
-                                    fontWeight = FontWeight.Medium,
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        color = MaterialTheme.colorScheme.primary
-                                    ),
-                                    modifier = Modifier
-                                        .padding(top = 24.dp)
-                                        .animateItemPlacement()
-                                )
-                            }
-
-                            items(
-                                count = result.data.size,
-                                key = { index -> result.data[index].currency }
-                            ) { index ->
-                                result.data[index].apply {
-                                    CurrencyListItem(
-                                        currency = this,
-                                        formattedAmount = viewModel.getFormattedCurrencyAmount(
-                                            amount = convertedCurrency,
-                                            currencyCode = currency
-                                        ),
-                                        modifier = Modifier
-                                            .animateItemPlacement()
-                                    )
-                                }
-                            }
                         }
                     }
 
-                    is Data.Error -> item {
-                        Text(text = result.message)
+                    if (amountToBeConverted.isNotBlank()) {
+                        items(
+                            count = result.data.size,
+                            key = { index -> result.data[index].currency }
+                        ) { index ->
+                            result.data[index].apply {
+                                CurrencyListItem(
+                                    currency = this,
+                                    formattedAmount = viewModel.getFormattedCurrencyAmount(
+                                        amount = convertedCurrency,
+                                        currencyCode = currency
+                                    ),
+                                    modifier = Modifier
+                                        .animateItemPlacement()
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    DefaultAnimatedVisibility(result is Data.Error) {
+                        Text(text = (result as Data.Error).message)
                     }
                 }
             }
