@@ -20,7 +20,7 @@ fun CurrencySelector(
         onDismissRequest = onDismissRequest,
         drawItem = { item, selected, itemEnabled, onClick ->
             BottomSheetMenuItem(
-                text = item.currency,
+                text = "${item.country} (${item.currency})",
                 selected = selected,
                 enabled = itemEnabled,
                 onClick = onClick,

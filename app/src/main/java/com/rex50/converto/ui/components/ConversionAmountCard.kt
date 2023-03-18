@@ -54,7 +54,7 @@ fun ConversionAmountCard(
             Spacer(modifier = Modifier.width(16.dp))
 
             RoundedButtonWithIcon(
-                text = selectedCurrency.currency,
+                text = "${selectedCurrency.country} (${selectedCurrency.currency})",
                 icon = Icons.Default.KeyboardArrowDown,
                 onClick = onChangeCurrency
             )

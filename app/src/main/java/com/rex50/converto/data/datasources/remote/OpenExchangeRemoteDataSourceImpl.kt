@@ -18,6 +18,13 @@ constructor(
     private val key = BuildConfig.OPEN_EXCHANGE_SERVICE_KEY
 
     suspend fun fetchCurrenciesRate(): Result<JSONObject> = withContext(Dispatchers.IO) {
+        val response = openExchangeService.fetchLatestRates(key)
+        return@withContext response.mapSafelyToResult {
+            JSONObject(it.toString())
+        }
+    }
+
+    suspend fun fetchCountries(): Result<JSONObject> = withContext(Dispatchers.IO) {
         val response = openExchangeService.fetchCurrencies(key)
         return@withContext response.mapSafelyToResult {
             JSONObject(it.toString())

@@ -4,6 +4,7 @@ object SharedPrefsKeys {
 
     const val LAST_UPDATED_TIME = "lastUpdateTime"
     const val CURRENCIES_RESPONSE = "currenciesResponse"
+    const val COUNTRIES_RESPONSE = "countriesResponse"
 
     const val LAST_SELECTED_FROM_CURRENCY = "lastSelectedFromCurrency"
     const val LAST_SELECTED_TO_CURRENCY = "lastSelectedToCurrency"

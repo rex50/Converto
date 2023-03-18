@@ -1,7 +1,6 @@
 package com.rex50.converto.ui.screens.home
 
 import android.util.Log
-import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
@@ -17,7 +16,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,14 +57,15 @@ constructor(
                 response.data.rates.map {
                     Currency(
                         currency = it.key,
-                        rate = it.value
+                        rate = it.value.rate,
+                        country = it.value.country
                     )
                 }.toMutableList().let { updatedCurrencies ->
 
                     updateUserLastSessionData(updatedCurrencies)
 
                     updatedCurrencies.updateConvertedAmount()
-                        .sortByCurrency()
+                        .sortByCountry()
 
                     _currencies.value = Data.Successful(updatedCurrencies)
                 }
@@ -94,7 +93,7 @@ constructor(
                     try {
                         val updatedCurrencies = state.data.toMutableList()
                             .updateConvertedAmount()
-                            .sortByCurrency()
+                            .sortByCountry()
                         _currencies.value = Data.Successful(updatedCurrencies)
                     } catch (e: NumberFormatException) {
                         Log.e(TAG, "convert: ", e)
@@ -198,8 +197,8 @@ constructor(
     /**
      * Sorts the list in place based on currency code
      */
-    private fun MutableList<Currency>.sortByCurrency(): List<Currency> {
-        sortBy { it.currency }
+    private fun MutableList<Currency>.sortByCountry(): List<Currency> {
+        sortBy { it.country }
         return this
     }
 

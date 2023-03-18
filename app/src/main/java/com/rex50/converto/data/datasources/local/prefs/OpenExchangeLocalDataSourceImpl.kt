@@ -22,12 +22,26 @@ constructor(context: Context) : Prefs(context) {
         }
     }
 
+    suspend fun fetchCountriesResponse(): JSONObject? = withContext(Dispatchers.IO) {
+        return@withContext try {
+            SharedPrefsKeys.COUNTRIES_RESPONSE.getString()
+                .takeIf { it.isNotBlank() && it != "{}" }
+                ?.let { JSONObject(it) }
+        } catch (e: JSONException) {
+            null
+        }
+    }
+
     suspend fun fetchLastUpdateTime(): DateTime = withContext(Dispatchers.IO) {
         return@withContext DateTime(SharedPrefsKeys.LAST_UPDATED_TIME.getLong())
     }
 
     suspend fun storeCurrenciesResponse(jsonObject: JSONObject) = withContext(Dispatchers.IO) {
         SharedPrefsKeys.CURRENCIES_RESPONSE.put(jsonObject.toString())
+    }
+
+    suspend fun storeCountriesResponse(jsonObject: JSONObject) = withContext(Dispatchers.IO) {
+        SharedPrefsKeys.COUNTRIES_RESPONSE.put(jsonObject.toString())
     }
 
     suspend fun updateLastUpdateTimeToNow() = withContext(Dispatchers.IO) {

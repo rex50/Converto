@@ -4,6 +4,12 @@ data class CurrenciesRateResponse(
     val base: String,
     val disclaimer: String,
     val license: String,
-    val rates: HashMap<String, Double>,
+    val rates: HashMap<String, Rate>,
     val timestamp: Int
+)
+
+data class Rate(
+    val rate: Double,
+    val currencyCode: String,
+    val country: String
 )
