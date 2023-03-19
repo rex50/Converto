@@ -33,7 +33,7 @@ fun CurrencyListItem(
         ) {
             currency.apply {
                 Text(
-                    text = this.currency,
+                    text = "${this.country} (${this.currency})",
                     fontWeight = FontWeight.Medium,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier

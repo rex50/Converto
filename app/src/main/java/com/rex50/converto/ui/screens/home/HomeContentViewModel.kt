@@ -58,7 +58,6 @@ constructor(
         _currencies.value = Data.Loading
         when (val response = openExchangeRepo.fetchCurrencies()) {
             is Result.Success -> {
-                delay(3000)
                 response.data.rates.map {
                     Currency(
                         currency = it.key,

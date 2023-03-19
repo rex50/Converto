@@ -26,6 +26,7 @@ enum class CardType {
 
 private object Keys {
     const val LOADER = "loader"
+    const val ERROR = "error"
     const val TO_CARD = "To card"
     const val OTHER_CONVERSIONS = "Other conversions"
 }
@@ -148,7 +149,7 @@ fun HomeContent(
                 }
 
                 // Error box with retry button
-                item {
+                item(key = Keys.ERROR) {
                     AnimatedVisibilityBox(isVisible = result is Data.Error) {
                         if(result is Data.Error) {
                             ErrorCard(
@@ -162,9 +163,7 @@ fun HomeContent(
                 }
 
                 // To card - where user can see the conversion amount
-                item(
-                    key = Keys.TO_CARD
-                ) {
+                item(key = Keys.TO_CARD) {
                     AnimatedVisibilityBox(isVisible = result is Data.Successful) {
                         ConversionAmountCard(
                             label = stringResource(R.string.to_currency),
@@ -187,9 +186,7 @@ fun HomeContent(
 
                 if (result is Data.Successful) {
                     // Also show other conversions, if user has entered any amount
-                    item(
-                        key = Keys.OTHER_CONVERSIONS
-                    ) {
+                    item(key = Keys.OTHER_CONVERSIONS) {
                         AnimatedVisibilityBox(
                             isVisible = amountToBeConverted.isNotBlank(),
                             defaultTransitionDuration = 100
