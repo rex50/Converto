@@ -1,12 +1,9 @@
 package com.rex50.converto.ui.screens.home
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,6 +16,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rex50.converto.R
 import com.rex50.converto.ui.components.*
+import com.rex50.converto.ui.components.core.AnimatedVisibilityBox
 import com.rex50.converto.ui.models.Currency
 import com.rex50.converto.utils.Data
 
@@ -71,49 +69,59 @@ fun HomeContent(
         }
 
         // Conversion rate text
-        SimpleTextBannerCard(
-            isVisible = currencies is Data.Successful,
-            text = viewModel.getFormattedConversionRate(
-                fromCurrency = selectedFromCurrency,
-                toCurrency = selectedToCurrency
-            ),
+        AnimatedVisibilityBox(
             modifier = Modifier
-                .padding(
-                    vertical = 4.dp,
-                    horizontal = 16.dp
-                )
+                .animateContentSize()
                 .constrainAs(conversionRateCard) {
                     top.linkTo(header.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
-                }
-        )
+                },
+            isVisible = currencies is Data.Successful
+        ) {
+            SimpleTextBannerCard(
+                text = viewModel.getFormattedConversionRate(
+                    fromCurrency = selectedFromCurrency,
+                    toCurrency = selectedToCurrency
+                ),
+                modifier = Modifier
+                    .padding(
+                        vertical = 4.dp,
+                        horizontal = 16.dp
+                    )
+            )
+        }
 
-        // From card - where user can enter amount
-        ConversionAmountCard(
-            label = stringResource(R.string.from_currency),
-            selectedCurrency = selectedFromCurrency,
-            amount = amountToBeConverted,
-            onChangeAmount = {
-                viewModel.convert(it)
-            },
-            onChangeCurrency = {
-                changingCurrencyForCard = CardType.FROM
-                showCurrencyChanger = true
-            },
+        // From card - for user to enter amount
+        AnimatedVisibilityBox(
             modifier = Modifier
-                .padding(
-                    vertical = 8.dp,
-                    horizontal = 16.dp
-                )
                 .constrainAs(cardFromCurrency) {
                     top.linkTo(conversionRateCard.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
-                }
-        )
+                },
+            isVisible = currencies is Data.Successful
+        ) {
+            ConversionAmountCard(
+                label = stringResource(R.string.from_currency),
+                selectedCurrency = selectedFromCurrency,
+                amount = amountToBeConverted,
+                onChangeAmount = {
+                    viewModel.convert(it)
+                },
+                onChangeCurrency = {
+                    changingCurrencyForCard = CardType.FROM
+                    showCurrencyChanger = true
+                },
+                modifier = Modifier
+                    .padding(
+                        vertical = 8.dp,
+                        horizontal = 16.dp
+                    )
+            )
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -128,11 +136,28 @@ fun HomeContent(
         ) {
             currencies.let { result ->
 
+                // Loader - show while fetching latest rates
                 item(key = Keys.LOADER) {
                     if (result is Data.Loading) {
                         SimpleContentLoader(
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier
+                                .animateItemPlacement()
+                                .padding(top = 64.dp)
                         )
+                    }
+                }
+
+                // Error box with retry button
+                item {
+                    AnimatedVisibilityBox(isVisible = result is Data.Error) {
+                        if(result is Data.Error) {
+                            ErrorCard(
+                                modifier = Modifier.padding(top = 64.dp),
+                                message = result.message
+                            ) {
+                                viewModel.fetchCurrencies()
+                            }
+                        }
                     }
                 }
 
@@ -140,7 +165,7 @@ fun HomeContent(
                 item(
                     key = Keys.TO_CARD
                 ) {
-                    DefaultAnimatedVisibility(result is Data.Successful) {
+                    AnimatedVisibilityBox(isVisible = result is Data.Successful) {
                         ConversionAmountCard(
                             label = stringResource(R.string.to_currency),
                             selectedCurrency = selectedToCurrency,
@@ -165,9 +190,9 @@ fun HomeContent(
                     item(
                         key = Keys.OTHER_CONVERSIONS
                     ) {
-                        DefaultAnimatedVisibility(
+                        AnimatedVisibilityBox(
                             isVisible = amountToBeConverted.isNotBlank(),
-                            defaultTransitionDuration = 150
+                            defaultTransitionDuration = 100
                         ) {
                             Text(
                                 text = stringResource(R.string.other_conversions, selectedFromCurrency.currency),
@@ -201,16 +226,6 @@ fun HomeContent(
                         }
                     }
                 }
-
-                item {
-                    DefaultAnimatedVisibility(result is Data.Error) {
-                        if(result is Data.Error) {
-                            ErrorCard(message = result.message) {
-                                viewModel.fetchCurrencies()
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -240,6 +255,7 @@ fun HomeContent(
         )
     }
 
+    // Bottom sheet for About
     if(showInfoSheet) {
         AboutSheet() {
             showInfoSheet = false

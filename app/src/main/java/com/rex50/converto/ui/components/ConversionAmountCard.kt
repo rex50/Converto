@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rex50.converto.R
+import com.rex50.converto.ui.components.core.RoundedButtonWithIcon
 import com.rex50.converto.ui.models.Currency
 import com.rex50.converto.ui.theme.ConvertoTheme
 
@@ -110,7 +111,7 @@ private fun ConversionCardPreview() {
     ConvertoTheme {
         Surface {
             ConversionAmountCard(
-                label = "From",
+                label = stringResource(id = R.string.from_currency),
                 selectedCurrency = Currency(),
                 amount = "",
                 onChangeAmount = { },
@@ -128,7 +129,7 @@ private fun ConversionCardDarkPreview() {
     ConvertoTheme {
         Surface {
             ConversionAmountCard(
-                label = "To",
+                label = stringResource(id = R.string.to_currency),
                 selectedCurrency = Currency(),
                 amount = "10000",
                 enabled = false,

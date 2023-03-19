@@ -2,16 +2,20 @@ package com.rex50.converto.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import com.rex50.converto.BuildConfig
+import com.rex50.converto.R
+import com.rex50.converto.ui.components.core.BottomSheetMenu
+import com.rex50.converto.ui.components.core.BottomSheetMenuItem
 
 @Composable
 fun AboutSheet(
     info: List<Pair<String, String>> = listOf(
-        "Disclaimer" to "https://openexchangerates.org/terms",
-        "License" to "https://openexchangerates.org/license",
-        "Developed by Pavitra" to "",
-        "Created with ❤ in Bengaluru" to "",
-        "Version ${BuildConfig.VERSION_NAME}" to ""
+        stringResource(R.string.disclaimer) to stringResource(R.string.disclaimer_url),
+        stringResource(R.string.license) to stringResource(R.string.license_url),
+        stringResource(R.string.developed_by) to "",
+        stringResource(R.string.created_in) to "",
+        stringResource(id = R.string.version, BuildConfig.VERSION_NAME) to ""
     ),
     onDismissRequest: () -> Unit
 ) {

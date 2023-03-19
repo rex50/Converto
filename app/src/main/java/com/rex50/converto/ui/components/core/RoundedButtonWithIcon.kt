@@ -1,4 +1,4 @@
-package com.rex50.converto.ui.components
+package com.rex50.converto.ui.components.core
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

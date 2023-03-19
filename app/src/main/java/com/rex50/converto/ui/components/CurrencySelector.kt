@@ -1,6 +1,10 @@
 package com.rex50.converto.ui.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.rex50.converto.R
+import com.rex50.converto.ui.components.core.BottomSheetMenu
+import com.rex50.converto.ui.components.core.BottomSheetMenuItem
 import com.rex50.converto.ui.models.Currency
 
 @Composable
@@ -10,8 +14,10 @@ fun CurrencySelector(
     onCurrencySelected: (Currency) -> Unit,
     onDismissRequest: () -> Unit
 ) {
+
+   // TODO: Show search bar
     BottomSheetMenu(
-        notSetLabel = "Select a currency",
+        notSetLabel = stringResource(R.string.select_a_currency),
         items = currencies,
         selectedIndex = currencies.indexOf(selectedCurrency),
         onItemSelected = { _, item ->

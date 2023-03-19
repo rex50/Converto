@@ -15,27 +15,19 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SimpleTextBannerCard(
     modifier: Modifier = Modifier,
-    text: String,
-    isVisible: Boolean = true
+    text: String
 ) {
-    Box(
+    Text(
+        text = text,
+        fontWeight = FontWeight.Medium,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.titleMedium.copy(
+            color = MaterialTheme.colorScheme.secondary
+        ),
         modifier = modifier
-            .animateContentSize()
-    ) {
-        DefaultAnimatedVisibility(isVisible = isVisible) {
-            Text(
-                text = text,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    color = MaterialTheme.colorScheme.secondary
-                ),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = 8.dp
-                    )
+            .fillMaxWidth()
+            .padding(
+                vertical = 8.dp
             )
-        }
-    }
+    )
 }

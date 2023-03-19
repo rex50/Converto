@@ -4,6 +4,7 @@ import com.rex50.converto.BuildConfig
 import com.rex50.converto.data.datasources.remote.services.OpenExchangeService
 import com.rex50.converto.utils.Result
 import com.rex50.converto.utils.extensions.mapSafelyToResult
+import com.rex50.converto.utils.safeApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -18,14 +19,14 @@ constructor(
     private val key = BuildConfig.OPEN_EXCHANGE_SERVICE_KEY
 
     suspend fun fetchCurrenciesRate(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        val response = openExchangeService.fetchLatestRates(key)
+        val response = safeApiCall { openExchangeService.fetchLatestRates(key) }
         return@withContext response.mapSafelyToResult {
             JSONObject(it.toString())
         }
     }
 
     suspend fun fetchCountries(): Result<JSONObject> = withContext(Dispatchers.IO) {
-        val response = openExchangeService.fetchCurrencies(key)
+        val response = safeApiCall { openExchangeService.fetchCurrencies(key) }
         return@withContext response.mapSafelyToResult {
             JSONObject(it.toString())
         }

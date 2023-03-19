@@ -11,7 +11,8 @@ fun <Type: Any, ReturnType: Any> Response<Type>.mapSafelyToResult(transform: (Ty
             Result.Failure(e)
         }
     } else {
-        Result.Failure(Exception(message()))
+        // TODO: use errorBody for proper message
+        Result.Failure(Exception("Problem while connecting to server"))
     }
 }
 

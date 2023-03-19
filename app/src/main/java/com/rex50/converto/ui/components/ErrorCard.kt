@@ -3,15 +3,14 @@ package com.rex50.converto.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rex50.converto.ui.components.core.RoundedButtonWithIcon
 import com.rex50.converto.ui.theme.ConvertoTheme
 
 @Composable
@@ -22,22 +21,9 @@ fun ErrorCard(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .padding(
-                top = 8.dp,
-                bottom = 8.dp,
-                start = 8.dp,
-                end = 8.dp
-            )
-            .fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
-        Text(
-            text = message,
-            fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.secondary
-            )
-        )
+        Text(text = message)
 
         Spacer(modifier = Modifier.height(16.dp))
 

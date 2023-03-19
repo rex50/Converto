@@ -13,6 +13,7 @@ import com.rex50.converto.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -50,10 +51,14 @@ constructor(
         fetchCurrencies()
     }
 
+    /**
+     * Fetches currencies and restores last session data
+     */
     fun fetchCurrencies() = viewModelScope.launch(Dispatchers.IO) {
         _currencies.value = Data.Loading
         when (val response = openExchangeRepo.fetchCurrencies()) {
             is Result.Success -> {
+                delay(3000)
                 response.data.rates.map {
                     Currency(
                         currency = it.key,
@@ -77,8 +82,12 @@ constructor(
         }
     }
 
+    /**
+     * Validates and convert given amount
+     * Also updates all other currencies conversion
+     */
     fun convert(text: String) {
-        _amountToBeConverted.value = text.removeSpecialCharactersFromAmount()
+        _amountToBeConverted.value = text.removeUnneededCharactersFromAmount()
         _selectedToCurrency.value = _selectedToCurrency.value.also {
             it.updateConversion(
                 fromCurrency = _selectedFromCurrency.value,
@@ -138,6 +147,9 @@ constructor(
         return currencyFormatter.format(amount, currencyCode)
     }
 
+    /**
+     * Formats conversion rate text
+     */
     fun getFormattedConversionRate(fromCurrency: Currency, toCurrency: Currency): String {
         val conversionRate = currencyConvertor.convertAmount(
             fromCurrency,
@@ -152,6 +164,9 @@ constructor(
                 currencyCodeTo
     }
 
+    /**
+     * Fetches and updates last session data
+     */
     private suspend fun updateUserLastSessionData(updatedCurrencies: MutableList<Currency>) {
         val fromCode = userSelectionRepo.getLastSelectedFromCurrency()
         if(fromCode.isNotBlank())
@@ -216,17 +231,21 @@ constructor(
         }
     }
 
-    private fun String.removeSpecialCharactersFromAmount(): String {
+    /**
+     * Removes unneeded characters from the string
+     */
+    private fun String.removeUnneededCharactersFromAmount(): String {
         return removeInitialNonNumerical()
             .removeSpaceAndHyphen()
             .removeDuplicateDecimal()
+            .removeCommaAfterDecimal()
     }
 
     /**
      * Checks and removes spaces and hyphens
      */
     private fun String.removeSpaceAndHyphen(): String {
-        return replace("[^0-9\\,\\.]".toRegex(), "")
+        return replace("[^\\d,.]".toRegex(), "")
     }
 
     /**
@@ -240,8 +259,13 @@ constructor(
     /**
      * Checks and removes selected characters
      */
-    private fun String.removeInitialNonNumerical(): String {
-        return takeIf { length == 1 }?.replace("[^0-9]".toRegex(), "") ?: this
-    }
+    private fun String.removeInitialNonNumerical(): String =
+        if (length == 1) replace("\\D".toRegex(), "") else this
+
+    /**
+     * Removes comma after decimal point
+     */
+    private fun String.removeCommaAfterDecimal(): String =
+        if(contains('.') && last() == ',') dropLast(1) else this
 
 }
