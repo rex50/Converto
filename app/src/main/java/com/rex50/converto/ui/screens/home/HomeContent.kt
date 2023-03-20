@@ -2,14 +2,24 @@ package com.rex50.converto.ui.screens.home
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -18,6 +28,7 @@ import com.rex50.converto.R
 import com.rex50.converto.ui.components.*
 import com.rex50.converto.ui.components.core.AnimatedVisibilityBox
 import com.rex50.converto.ui.models.Currency
+import com.rex50.converto.ui.theme.ConvertoTheme
 import com.rex50.converto.utils.Data
 
 enum class CardType {
@@ -133,7 +144,8 @@ fun HomeContent(
                     bottom.linkTo(parent.bottom)
                     width = Dimension.fillToConstraints
                     height = Dimension.fillToConstraints
-                }
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             currencies.let { result ->
 
@@ -151,7 +163,7 @@ fun HomeContent(
                 // Error box with retry button
                 item(key = Keys.ERROR) {
                     AnimatedVisibilityBox(isVisible = result is Data.Error) {
-                        if(result is Data.Error) {
+                        if (result is Data.Error) {
                             ErrorCard(
                                 modifier = Modifier.padding(top = 64.dp),
                                 message = result.message
@@ -164,6 +176,27 @@ fun HomeContent(
 
                 // To card - where user can see the conversion amount
                 item(key = Keys.TO_CARD) {
+                    AnimatedVisibilityBox(isVisible = result is Data.Successful) {
+                        IconButton(
+                            modifier = Modifier
+                                .padding(bottom = 16.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.secondaryContainer,
+                                    MaterialTheme.shapes.large
+                                )
+                                .padding(
+                                    start = 16.dp,
+                                    end = 16.dp
+                                ),
+                            onClick = { viewModel.swapCurrency() }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.round_swap_vert_24),
+                                contentDescription = "Swap currency",
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    }
                     AnimatedVisibilityBox(isVisible = result is Data.Successful) {
                         ConversionAmountCard(
                             label = stringResource(R.string.to_currency),
@@ -186,19 +219,28 @@ fun HomeContent(
 
                 if (result is Data.Successful) {
                     // Also show other conversions, if user has entered any amount
-                    item(key = Keys.OTHER_CONVERSIONS) {
+                    stickyHeader(key = Keys.OTHER_CONVERSIONS) {
                         AnimatedVisibilityBox(
                             isVisible = amountToBeConverted.isNotBlank(),
                             defaultTransitionDuration = 100
                         ) {
                             Text(
-                                text = stringResource(R.string.other_conversions, selectedFromCurrency.currency),
+                                text = stringResource(
+                                    R.string.other_conversions,
+                                    selectedFromCurrency.currency
+                                ),
                                 fontWeight = FontWeight.Medium,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     color = MaterialTheme.colorScheme.primary
                                 ),
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .padding(top = 24.dp)
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(
+                                        top = 24.dp,
+                                        bottom = 16.dp
+                                    )
                                     .animateItemPlacement()
                             )
                         }
@@ -218,6 +260,11 @@ fun HomeContent(
                                     ),
                                     modifier = Modifier
                                         .animateItemPlacement()
+                                        .fillMaxWidth()
+                                        .padding(
+                                            top = if (index == 0) 0.dp else 16.dp,
+                                            bottom = if (index == result.data.lastIndex) 16.dp else 0.dp
+                                        )
                                 )
                             }
                         }
@@ -253,9 +300,28 @@ fun HomeContent(
     }
 
     // Bottom sheet for About
-    if(showInfoSheet) {
+    if (showInfoSheet) {
         AboutSheet() {
             showInfoSheet = false
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeContentPreview() {
+    ConvertoTheme {
+        Surface {
+            IconButton(
+                modifier = Modifier.padding(8.dp),
+                onClick = { }
+            ) {
+                Image(
+                    modifier = Modifier,
+                    painter = painterResource(id = R.drawable.round_swap_vert_24),
+                    contentDescription = "Swap currency",
+                )
+            }
         }
     }
 }

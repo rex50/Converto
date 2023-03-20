@@ -24,8 +24,6 @@ fun CurrencyListItem(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp)
     ) {
         Column(
             modifier = Modifier

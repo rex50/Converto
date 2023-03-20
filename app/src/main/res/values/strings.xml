@@ -2,7 +2,7 @@
     <string name="app_name">Converto</string>
     <string name="from_currency">From</string>
     <string name="to_currency">To</string>
-    <string name="other_conversions">From %s to other conversions</string>
+    <string name="other_conversions">From %s to other currencies</string>
     <string name="amount_placeholder">0.0</string>
     <string name="msg_update_rates">Updating currencies rate...</string>
     <string name="select_a_currency">Select a currency</string>

@@ -159,8 +159,18 @@ constructor(
         val currencyCodeTo = toCurrency.currency
         return "${getFormattedCurrencyAmount(1.0, currencyCodeFrom)} " +
                 currencyCodeFrom +
-                " equals ${getFormattedCurrencyAmount(conversionRate, currencyCodeTo)} " +
+                " equals to ${getFormattedCurrencyAmount(conversionRate, currencyCodeTo)} " +
                 currencyCodeTo
+    }
+
+    /**
+     * Swaps from and to currency
+     */
+    fun swapCurrency() {
+        val tempFromCurrency = _selectedFromCurrency.value
+        changeSelectedFromCurrency(_selectedToCurrency.value)
+        changeSelectedToCurrency(tempFromCurrency)
+        convert(_amountToBeConverted.value)
     }
 
     /**
