@@ -15,7 +15,7 @@ fun CurrencySelector(
     onDismissRequest: () -> Unit
 ) {
 
-   // TODO: Show search bar
+    // TODO: Show search bar for searching currencies and countries
     BottomSheetMenu(
         notSetLabel = stringResource(R.string.select_a_currency),
         items = currencies,
