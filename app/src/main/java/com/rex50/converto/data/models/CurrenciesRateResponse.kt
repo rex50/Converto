@@ -5,7 +5,8 @@ data class CurrenciesRateResponse(
     val disclaimer: String,
     val license: String,
     val rates: HashMap<String, Rate>,
-    val timestamp: Int
+    val timestamp: Int,
+    val lastUpdateTime: Long
 )
 
 data class Rate(

@@ -3,13 +3,15 @@ package com.rex50.converto.data.datasources.remote.mappers
 import com.rex50.converto.data.models.CurrenciesRateResponse
 import com.rex50.converto.data.models.Rate
 import com.rex50.converto.utils.extensions.orZero
+import org.joda.time.DateTime
 import org.json.JSONObject
 
 class CurrenciesResponseMapper {
 
     fun jsonToCurrenciesRateResponse(
         jsonObject: JSONObject,
-        countriesMap: HashMap<String, String>? = null
+        countriesMap: HashMap<String, String>? = null,
+        lastUpdateTime: Long = 0
     ): CurrenciesRateResponse {
         jsonObject.apply {
             val base = optString("base")
@@ -31,7 +33,8 @@ class CurrenciesResponseMapper {
                 disclaimer,
                 license,
                 rates,
-                timeStamp
+                timeStamp,
+                lastUpdateTime
             )
         }
     }

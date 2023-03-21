@@ -17,6 +17,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,10 +30,6 @@ constructor(
     private val currencyConvertor: CurrencyConvertor,
     private val currencyFormatter: CurrencyFormatter
 ) : ViewModel() {
-
-    companion object {
-        private const val TAG = "HomeContentViewModel"
-    }
 
     private val _currencies: MutableStateFlow<Data<List<Currency>>> = MutableStateFlow(Data.Loading)
     val currencies = _currencies.asStateFlow()
@@ -71,6 +69,7 @@ constructor(
                     updatedCurrencies.updateConvertedAmount()
                         .sortByCountry()
 
+                    fetchCurrenciesAfterDelay(response.data.lastUpdateTime)
                     _currencies.value = Data.Successful(updatedCurrencies)
                 }
             }
@@ -178,13 +177,13 @@ constructor(
      */
     private suspend fun updateUserLastSessionData(updatedCurrencies: MutableList<Currency>) {
         val fromCode = userSelectionRepo.getLastSelectedFromCurrency()
-        if(fromCode.isNotBlank())
+        if (fromCode.isNotBlank())
             updatedCurrencies.find { it.currency == fromCode }?.let {
                 changeSelectedFromCurrency(it)
             }
 
         val toCode = userSelectionRepo.getLastSelectedToCurrency()
-        if(toCode.isNotBlank())
+        if (toCode.isNotBlank())
             updatedCurrencies.find { it.currency == toCode }?.let {
                 changeSelectedToCurrency(it)
             }
@@ -275,6 +274,29 @@ constructor(
      * Removes comma after decimal point
      */
     private fun String.removeCommaAfterDecimal(): String =
-        if(contains('.') && last() == ',') dropLast(1) else this
+        if (contains('.') && last() == ',') dropLast(1) else this
+
+    /**
+     * Fetches currencies after [UPDATE_FREQUENCY_MINUTES] of last update time
+     */
+    private fun fetchCurrenciesAfterDelay(lastUpdatedTimeStamp: Long) {
+        getDiffTimeInMillis(lastUpdatedTimeStamp).takeIf { it > 0 }?.let {
+            viewModelScope.launch {
+                delay(it)
+                fetchCurrencies()
+            }
+        }
+    }
+
+    /**
+     * Gives time diff between timestamp + [UPDATE_FREQUENCY_MINUTES] and current time in millis
+     */
+    private fun getDiffTimeInMillis(timeStamp: Long): Long =
+        DateTime(Date(timeStamp)).plusMinutes(UPDATE_FREQUENCY_MINUTES).toDate().time - Date().time
+
+    companion object {
+        private const val TAG = "HomeContentViewModel"
+        private const val UPDATE_FREQUENCY_MINUTES = 30
+    }
 
 }

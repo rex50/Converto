@@ -23,7 +23,7 @@ constructor(
 ) : OpenExchangeRepo {
 
     companion object {
-        private const val DATA_VALIDITY_HOURS = 3
+        private const val DATA_VALIDITY_MINUTES = 30
     }
 
     override suspend fun fetchCurrencies(): Result<CurrenciesRateResponse> =
@@ -44,10 +44,17 @@ constructor(
 
             return@withContext response.await().mapSafelyIfSuccess {
                 // Update local
-                if (localCurrenciesRateData == null)
+                val time = if (localCurrenciesRateData == null) {
                     updateLocalData(response = it)
+                    DateTime.now().millis
+                } else
+                    lastUpdateTime.millis
 
-                responseMapper.jsonToCurrenciesRateResponse(it, countriesMap)
+                responseMapper.jsonToCurrenciesRateResponse(
+                    jsonObject = it,
+                    countriesMap = countriesMap,
+                    lastUpdateTime = time
+                )
             }
         }
 
@@ -82,7 +89,7 @@ constructor(
         }
 
     private suspend fun getLocalCurrenciesRateOrNull(lastUpdateTime: DateTime): JSONObject? =
-        if (lastUpdateTime.plusHours(DATA_VALIDITY_HOURS).isAfterNow) {
+        if (lastUpdateTime.plusMinutes(DATA_VALIDITY_MINUTES).isAfterNow) {
             localDataSource.fetchCurrenciesResponse()
         } else {
             localDataSource.storeCurrenciesResponse(JSONObject())

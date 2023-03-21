@@ -14,7 +14,6 @@ import io.mockk.mockk
 import io.mockk.unmockkAll
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.joda.time.DateTime
 import org.json.JSONObject

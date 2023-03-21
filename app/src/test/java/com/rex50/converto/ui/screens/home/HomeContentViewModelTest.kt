@@ -3,6 +3,7 @@ package com.rex50.converto.ui.screens.home
 import android.util.Log
 import com.rex50.converto.MainDispatcherRule
 import com.rex50.converto.TestUtils.createCurrenciesRateResponse
+import com.rex50.converto.TestUtils.initJodaTimeAndroid
 import com.rex50.converto.TestUtils.mockLogs
 import com.rex50.converto.awaitCompletion
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
@@ -15,7 +16,6 @@ import com.rex50.converto.utils.Result
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.*
@@ -54,7 +54,7 @@ class HomeContentViewModelTest {
         coEvery { userSelectionRepo.getLastSelectedFromCurrency() } returns lastSelectedFromCurrency
         coEvery { userSelectionRepo.getLastSelectedToCurrency() } returns lastSelectedToCurrency
         every { currencyFormatter.format(any(), any()) } answers {
-            if(secondArg<String>() == "USD") "$1.00" else "₹20.00"
+            if (secondArg<String>() == "USD") "$1.00" else "₹20.00"
         }
         every { currencyConvertor.convertAmount(any(), any(), any()) } returns 20.0
 
@@ -63,6 +63,7 @@ class HomeContentViewModelTest {
 
     @Test
     fun `fetchCurrencies success, updates all currencies and last selected currencies`() = runTest {
+        initJodaTimeAndroid(mockk(relaxed = true))
         val job = viewModel.fetchCurrencies()
         job.awaitCompletion()
 
@@ -130,8 +131,9 @@ class HomeContentViewModelTest {
 
     @Test
     fun `getFormattedConversionRate returns formatted conversion rate`() = runTest {
-        val formattedRate = viewModel.getFormattedConversionRate(Currency(), Currency(currency = "INR"))
-        assertEquals("$1.00 USD equals ₹20.00 INR", formattedRate)
+        val formattedRate =
+            viewModel.getFormattedConversionRate(Currency(), Currency(currency = "INR"))
+        assertEquals("$1.00 USD equals to ₹20.00 INR", formattedRate)
     }
 
 }
