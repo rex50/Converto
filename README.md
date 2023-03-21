@@ -41,7 +41,7 @@ Converto
 │   │   └── core
 │   ├── models
 │   ├── screens
-│   │   └── home              // HomeContentViewModel (Class 100%, Method 96%, Line 93%)
+│   │   └── home              // HomeContentViewModel (Class 85%, Method 92%, Line 90%)
 │   └── theme
 └── utils                     // Class 92%, Method 94%, Line 91%
     └── extensions
