@@ -1,6 +1,6 @@
 package com.rex50.converto.data.repos.open_exchange
 
-import com.rex50.converto.data.datasources.local.prefs.OpenExchangeLocalDataSourceImpl
+import com.rex50.converto.data.datasources.local.OpenExchangeLocalDataSourceImpl
 import com.rex50.converto.data.datasources.remote.OpenExchangeRemoteDataSourceImpl
 import com.rex50.converto.data.datasources.remote.mappers.CurrenciesResponseMapper
 import com.rex50.converto.data.models.CountriesResponse

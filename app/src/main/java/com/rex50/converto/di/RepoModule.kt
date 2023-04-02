@@ -1,7 +1,7 @@
 package com.rex50.converto.di
 
-import com.rex50.converto.data.datasources.local.prefs.OpenExchangeLocalDataSourceImpl
-import com.rex50.converto.data.datasources.local.prefs.UserSelectionLocalDataSourceImpl
+import com.rex50.converto.data.datasources.local.OpenExchangeLocalDataSourceImpl
+import com.rex50.converto.data.datasources.local.UserSelectionLocalDataSourceImpl
 import com.rex50.converto.data.datasources.remote.OpenExchangeRemoteDataSourceImpl
 import com.rex50.converto.data.datasources.remote.mappers.CurrenciesResponseMapper
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo

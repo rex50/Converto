@@ -1,14 +1,15 @@
 package com.rex50.converto.di
 
-import android.content.Context
-import com.rex50.converto.data.datasources.local.prefs.OpenExchangeLocalDataSourceImpl
-import com.rex50.converto.data.datasources.local.prefs.UserSelectionLocalDataSourceImpl
+import androidx.datastore.core.DataStore
+import com.rex50.converto.data.datasources.local.OpenExchangeLocalDataSourceImpl
+import com.rex50.converto.data.datasources.local.UserSelectionLocalDataSourceImpl
 import com.rex50.converto.data.datasources.remote.OpenExchangeRemoteDataSourceImpl
 import com.rex50.converto.data.datasources.remote.services.OpenExchangeService
+import com.rex50.converto.data.models.OpenExchangeData
+import com.rex50.converto.data.models.UserLastSessionData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -23,11 +24,13 @@ object DataSourceModule {
 
     @Singleton
     @Provides
-    fun providesOpenExchangeLocalDataSource(@ApplicationContext context: Context) = OpenExchangeLocalDataSourceImpl(context)
+    fun providesOpenExchangeLocalDataSource(openExchangeDataStore: DataStore<OpenExchangeData>) =
+        OpenExchangeLocalDataSourceImpl(openExchangeDataStore)
 
 
     @Singleton
     @Provides
-    fun providesUserSelectionLocalDataSource(@ApplicationContext context: Context) = UserSelectionLocalDataSourceImpl(context)
+    fun providesUserSelectionLocalDataSource(userLastSessionDataStore: DataStore<UserLastSessionData>) =
+        UserSelectionLocalDataSourceImpl(userLastSessionDataStore)
 
 }

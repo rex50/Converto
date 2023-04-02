@@ -1,7 +1,9 @@
-package com.rex50.converto.data.datasources.local.prefs
+package com.rex50.converto.data.datasources.local
 
-import android.content.Context
+import androidx.datastore.core.DataStore
+import com.rex50.converto.data.models.OpenExchangeData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import org.json.JSONException
@@ -10,12 +12,12 @@ import javax.inject.Inject
 
 class OpenExchangeLocalDataSourceImpl
 @Inject
-constructor(context: Context) : Prefs(context) {
+constructor(private val dataStore: DataStore<OpenExchangeData>) {
 
     suspend fun fetchCurrenciesResponse(): JSONObject? = withContext(Dispatchers.IO) {
         return@withContext try {
-            SharedPrefsKeys.CURRENCIES_RESPONSE.getString()
-                .takeIf { it.isNotBlank() && it != "{}" }
+            dataStore.data.first().currenciesResponse
+                ?.takeIf { it.isNotBlank() && it != "{}" }
                 ?.let { JSONObject(it) }
         } catch (e: JSONException) {
             null
@@ -24,8 +26,8 @@ constructor(context: Context) : Prefs(context) {
 
     suspend fun fetchCountriesResponse(): JSONObject? = withContext(Dispatchers.IO) {
         return@withContext try {
-            SharedPrefsKeys.COUNTRIES_RESPONSE.getString()
-                .takeIf { it.isNotBlank() && it != "{}" }
+            dataStore.data.first().countriesResponse
+                ?.takeIf { it.isNotBlank() && it != "{}" }
                 ?.let { JSONObject(it) }
         } catch (e: JSONException) {
             null
@@ -33,19 +35,25 @@ constructor(context: Context) : Prefs(context) {
     }
 
     suspend fun fetchLastUpdateTime(): DateTime = withContext(Dispatchers.IO) {
-        return@withContext DateTime(SharedPrefsKeys.LAST_UPDATED_TIME.getLong())
+        return@withContext DateTime(dataStore.data.first().lastUpdateTime)
     }
 
     suspend fun storeCurrenciesResponse(jsonObject: JSONObject) = withContext(Dispatchers.IO) {
-        SharedPrefsKeys.CURRENCIES_RESPONSE.put(jsonObject.toString())
+        dataStore.updateData {
+            it.copy(currenciesResponse = jsonObject.toString())
+        }
     }
 
     suspend fun storeCountriesResponse(jsonObject: JSONObject) = withContext(Dispatchers.IO) {
-        SharedPrefsKeys.COUNTRIES_RESPONSE.put(jsonObject.toString())
+        dataStore.updateData {
+            it.copy(countriesResponse = jsonObject.toString())
+        }
     }
 
     suspend fun updateLastUpdateTimeToNow() = withContext(Dispatchers.IO) {
-        SharedPrefsKeys.LAST_UPDATED_TIME.put(DateTime.now().millis)
+        dataStore.updateData {
+            it.copy(lastUpdateTime = DateTime.now().millis)
+        }
     }
 
 }

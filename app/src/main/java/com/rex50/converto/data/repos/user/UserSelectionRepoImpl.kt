@@ -1,6 +1,6 @@
 package com.rex50.converto.data.repos.user
 
-import com.rex50.converto.data.datasources.local.prefs.UserSelectionLocalDataSourceImpl
+import com.rex50.converto.data.datasources.local.UserSelectionLocalDataSourceImpl
 import javax.inject.Inject
 
 class UserSelectionRepoImpl

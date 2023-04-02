@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
 }
@@ -102,6 +103,10 @@ dependencies {
     // mockk - For unit testing
     testImplementation "io.mockk:mockk-android:${mockkVersion}"
     testImplementation "io.mockk:mockk-agent:${mockkVersion}"
+
+    // Proto Datastore - For local storage
+    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.json:json:20180813'
