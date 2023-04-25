@@ -5,6 +5,12 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def localPropertiesFile() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties
+}
+
 android {
     namespace 'com.rex50.converto'
     compileSdk 33
@@ -16,8 +22,10 @@ android {
         versionCode 1
         versionName "1.0"
 
+        def localProperties = localPropertiesFile()
+
         buildConfigField "String", "OPEN_EXCHANGE_SERVICE_URL", "\"https://openexchangerates.org/api/\""
-        buildConfigField "String", "OPEN_EXCHANGE_SERVICE_KEY", "\"5d1100fd57f242b99c67a82dff45f33c\""
+        buildConfigField "String", "OPEN_EXCHANGE_SERVICE_KEY", localProperties.getProperty('openExchangeServiceKey')
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
