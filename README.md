@@ -48,6 +48,12 @@ Converto
 ```
 
 ### 🏗️ Build 
+To build this project add "openExchangeServiceKey" in local.properties
+```bash
+openExchangeServiceKey="YOUR_APP_KEY"
+```
+
+Other details:
 ```bash
 Android Studio: Android Studio Electric Eel | 2022.1.1
 Kotlin: 1.8.10
