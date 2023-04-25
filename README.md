@@ -6,14 +6,14 @@ A simple app for currency conversion which uses [Open Exchange Rates (free accou
 | ![Splash](media/app_logo_splash.png) | ![Home](media/home_initial.png) | ![Conversion](media/home_with_data.png) |
 
 ### 👷‍♂️ Architecture 
-This project follows MVVM (clean architecture) which increases code testability and quality. As this is a small preject, I've skipped the UseCase layer which is beneficial for large projects with many screens and use-cases. Hilt library is used for dependency injection which helps achieving dependency inversion.
+This project follows MVVM (clean architecture) which increases code testability and quality. As this is a small project, I've skipped the UseCase layer (beneficial for large projects with many screens and use-cases). Hilt library is used for dependency injection which helps achieving dependency inversion.
 
 This app is created using latest UI framework (Jetpack Compose). Also added support for "Material You" theme engine (i.e. App adapts to device theme colors).
 
 ### 📝 Caching
-App caches the latest currency rates and countries to save bandwidth which is refreshed after 30 minutes. Shared Prefs is used for caching as it is simple and takes less time for development but Datastore or Room is a preferred way (which is easy to migrate from as MVVM clean architecture used).
+App caches the latest currency rates and countries to save bandwidth which is refreshed after 30 minutes. Shared Prefs is used for caching as it is simple and saves development time but Datastore or Room is a preferred way (which is easy to migrate from as MVVM clean architecture used, can see *impl_datastore* branch for implementation).
 
-App also caches user's last session data which is selected currencies.
+App also caches user's last session data containing selected currencies.
 
 ### 🧪 Unit tests 
 Unit tests for Data layer, Utils and ViewModels are added to ensure functional correctness. I was unable to cover 100% code coverage given time constraints but I'm sure that I've covered almost all the important functions and all the different scenarios which can be referred to write other testcases.
@@ -60,6 +60,11 @@ Kotlin: 1.8.10
 Gradle: 7.5 (AGP 7.4.0)
 Proguard: Not added yet only tested with debug build
 ```
+
+### 📃TODO
+- [ ] Add feature to search currencies
+- [ ] Show last updated time
+- [ ] Migrate from SharedPrefs to Datastore for caching
 
 
 ### 🔖 License
