@@ -40,10 +40,10 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "openExchangeServiceKey=${{ secrets.OPEN_EXCHANGE_API_KEY }}" > local.properties
+          echo "OPEN_EXCHANGE_API_KEY=${{ secrets.OPEN_EXCHANGE_API_KEY }}" > local.properties
 
       - name: Run Unit Tests
-        run: ./gradlew test --no-daemon --stacktrace
+        run: ./gradlew test
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
@@ -54,7 +54,7 @@ jobs:
           include_passed: true
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: ./gradlew assembleDebug
 
       - name: Get version name
         id: version

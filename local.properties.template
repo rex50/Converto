@@ -1,4 +1,4 @@
 ## Open Exchange API Key
 # Get your free API key from https://openexchangerates.org/signup/free
-openExchangeServiceKey=YOUR_API_KEY_HERE
+OPEN_EXCHANGE_API_KEY=YOUR_API_KEY_HERE
 

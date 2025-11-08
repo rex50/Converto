@@ -63,10 +63,9 @@ Converto
 ```
 
 ### 🏗️ Build
-To build this project add "openExchangeServiceKey"
-To build this project add "openExchangeServiceKey" in local.properties
+To build this project add "OPEN_EXCHANGE_API_KEY" in local.properties
 ```bash
-openExchangeServiceKey="YOUR_APP_KEY"
+OPEN_EXCHANGE_API_KEY="YOUR_APP_KEY"
 ```
 
 Other details:
