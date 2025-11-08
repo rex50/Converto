@@ -47,7 +47,8 @@ Converto
     └── extensions
 ```
 
-### 🏗️ Build 
+### 🏗️ Build
+To build this project add "openExchangeServiceKey"
 To build this project add "openExchangeServiceKey" in local.properties
 ```bash
 openExchangeServiceKey="YOUR_APP_KEY"
@@ -55,9 +56,9 @@ openExchangeServiceKey="YOUR_APP_KEY"
 
 Other details:
 ```bash
-Android Studio: Android Studio Electric Eel | 2022.1.1
+Android Studio: Android Studio Flamingo | 2022.2.1
 Kotlin: 1.8.10
-Gradle: 7.5 (AGP 7.4.0)
+Gradle: 8.0 (AGP 8.0.0)
 Proguard: Not added yet only tested with debug build
 ```
 

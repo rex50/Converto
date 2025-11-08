@@ -44,8 +44,6 @@ object TestUtils {
 
 }
 
-fun Job.awaitCompletion() {
-    while (isCompleted.not()) {
-        // Wait here until job is completed
-    }
+suspend fun Job.awaitCompletion() {
+    this.join()
 }

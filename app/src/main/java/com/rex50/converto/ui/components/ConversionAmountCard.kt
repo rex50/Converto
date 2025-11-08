@@ -84,7 +84,7 @@ fun ConversionAmountCard(
                         focusManager.clearFocus(true)
                     }
                 ),
-                colors = TextFieldDefaults.textFieldColors(
+                colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
