@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
 import com.rex50.converto.data.repos.user.UserSelectionRepo
+import com.rex50.converto.di.IoDispatcher
 import com.rex50.converto.ui.models.Currency
 import com.rex50.converto.utils.CurrencyConvertor
 import com.rex50.converto.utils.CurrencyFormatter
 import com.rex50.converto.utils.Data
 import com.rex50.converto.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,8 @@ constructor(
     private val openExchangeRepo: OpenExchangeRepo,
     private val userSelectionRepo: UserSelectionRepo,
     private val currencyConvertor: CurrencyConvertor,
-    private val currencyFormatter: CurrencyFormatter
+    private val currencyFormatter: CurrencyFormatter,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _currencies: MutableStateFlow<Data<List<Currency>>> = MutableStateFlow(Data.Loading)
@@ -52,7 +54,7 @@ constructor(
     /**
      * Fetches currencies and restores last session data
      */
-    fun fetchCurrencies() = viewModelScope.launch(Dispatchers.IO) {
+    fun fetchCurrencies() = viewModelScope.launch(ioDispatcher) {
         _currencies.value = Data.Loading
         when (val response = openExchangeRepo.fetchCurrencies()) {
             is Result.Success -> {
@@ -94,7 +96,7 @@ constructor(
         }
 
         convertorJob?.cancel()
-        convertorJob = viewModelScope.launch(Dispatchers.IO) {
+        convertorJob = viewModelScope.launch(ioDispatcher) {
             _currencies.value.let { state ->
                 if (state is Data.Successful) {
                     try {

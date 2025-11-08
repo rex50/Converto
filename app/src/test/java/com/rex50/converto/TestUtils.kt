@@ -43,7 +43,3 @@ object TestUtils {
     }
 
 }
-
-suspend fun Job.awaitCompletion() {
-    this.join()
-}

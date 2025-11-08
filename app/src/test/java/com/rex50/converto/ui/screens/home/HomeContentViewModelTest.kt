@@ -5,7 +5,6 @@ import com.rex50.converto.MainDispatcherRule
 import com.rex50.converto.TestUtils.createCurrenciesRateResponse
 import com.rex50.converto.TestUtils.initJodaTimeAndroid
 import com.rex50.converto.TestUtils.mockLogs
-import com.rex50.converto.awaitCompletion
 import com.rex50.converto.data.repos.open_exchange.OpenExchangeRepo
 import com.rex50.converto.data.repos.user.UserSelectionRepo
 import com.rex50.converto.ui.models.Currency
@@ -31,12 +30,17 @@ class HomeContentViewModelTest {
     private val userSelectionRepo = mockk<UserSelectionRepo>(relaxed = true)
     private val currencyConvertor = mockk<CurrencyConvertor>(relaxed = true)
     private val currencyFormatter = mockk<CurrencyFormatter>(relaxed = true)
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private val viewModel by lazy {
         HomeContentViewModel(
             openExchangeRepo = openExchangeRepo,
             userSelectionRepo = userSelectionRepo,
             currencyConvertor = currencyConvertor,
-            currencyFormatter = currencyFormatter
+            currencyFormatter = currencyFormatter,
+            ioDispatcher = mainDispatcherRule.testDispatcher
         )
     }
 
@@ -45,8 +49,6 @@ class HomeContentViewModelTest {
     private val lastSelectedFromCurrency = "AED"
     private val lastSelectedToCurrency = "AFN"
 
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
 
     @Before
     fun init() {
@@ -64,8 +66,7 @@ class HomeContentViewModelTest {
     @Test
     fun `fetchCurrencies success, updates all currencies and last selected currencies`() = runTest {
         initJodaTimeAndroid(mockk(relaxed = true))
-        val job = viewModel.fetchCurrencies()
-        job.awaitCompletion()
+        viewModel.fetchCurrencies()
 
         assertTrue(viewModel.currencies.value is Data.Successful)
         assertTrue((viewModel.currencies.value as Data.Successful).data.isNotEmpty())
@@ -78,8 +79,7 @@ class HomeContentViewModelTest {
     fun `fetchCurrencies failure, sets error in currencies`() = runTest {
         coEvery { openExchangeRepo.fetchCurrencies() } returns Result.Failure(Exception("Test"))
 
-        val job = viewModel.fetchCurrencies()
-        job.awaitCompletion()
+        viewModel.fetchCurrencies()
 
         assertTrue(viewModel.currencies.value is Data.Error)
     }
@@ -110,8 +110,7 @@ class HomeContentViewModelTest {
     fun `calling convert with valid input, updates amountToBeConverted and all currencies conversions`() =
         runTest {
             // fetch currencies
-            val job = viewModel.fetchCurrencies()
-            job.awaitCompletion()
+            viewModel.fetchCurrencies()
 
             // Before calling convert, verify that amountTobeConverted is empty
             assertTrue(viewModel.amountTobeConverted.value.isEmpty())
@@ -124,7 +123,7 @@ class HomeContentViewModelTest {
         }
 
     @Test
-    fun `getFormattedCurrencyAmount returns formatted amount to display`() = runTest {
+    fun `getFormattedCurrencyAmount returns formatted amount to display`() {
         val formattedAmount = viewModel.getFormattedCurrencyAmount(1.0, "USD")
         assertEquals("$1.00", formattedAmount)
     }
