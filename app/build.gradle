@@ -61,7 +61,7 @@ android {
     applicationVariants.all { variant ->
         kotlin.sourceSets {
             getByName(variant.name) {
-                kotlin.srcDir("${buildDir}/generated/ksp/${variant.name}/kotlin")
+                kotlin.srcDir("${layout.buildDirectory.get().asFile}/generated/ksp/${variant.name}/kotlin")
             }
         }
     }
