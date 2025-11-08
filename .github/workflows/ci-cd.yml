@@ -43,6 +43,8 @@ jobs:
           echo "OPEN_EXCHANGE_API_KEY=${{ secrets.OPEN_EXCHANGE_API_KEY }}" > local.properties
 
       - name: Run Unit Tests
+        env:
+          OPEN_EXCHANGE_SERVICE_KEY: ${{ secrets.OPEN_EXCHANGE_API_KEY }}
         run: ./gradlew test
 
       - name: Publish Test Report
@@ -54,6 +56,8 @@ jobs:
           include_passed: true
 
       - name: Build Debug APK
+        env:
+          OPEN_EXCHANGE_SERVICE_KEY: ${{ secrets.OPEN_EXCHANGE_API_KEY }}
         run: ./gradlew assembleDebug
 
       - name: Get version name

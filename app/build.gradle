@@ -6,12 +6,6 @@ plugins {
     id 'com.google.devtools.ksp'
 }
 
-def localPropertiesFile() {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    return properties
-}
-
 android {
     namespace 'com.rex50.converto'
     compileSdk 35
@@ -23,10 +17,21 @@ android {
         versionCode 1
         versionName "1.0"
 
-        def localProperties = localPropertiesFile()
+        def apiKey = ""
+        def localPropertiesFile = project.rootProject.file('local.properties')
+
+        // Check if running in CI/CD (GitHub Actions sets CI env variable)
+        if (System.getenv("OPEN_EXCHANGE_SERVICE_KEY")) {
+            apiKey = System.getenv("OPEN_EXCHANGE_SERVICE_KEY")
+        } else if (localPropertiesFile.exists()) {
+            // Read from local.properties for local development
+            Properties localProperties = new Properties()
+            localProperties.load(localPropertiesFile.newDataInputStream())
+            apiKey = localProperties.getProperty('OPEN_EXCHANGE_API_KEY', '')
+        }
 
         buildConfigField "String", "OPEN_EXCHANGE_SERVICE_URL", "\"https://openexchangerates.org/api/\""
-        buildConfigField "String", "OPEN_EXCHANGE_SERVICE_KEY", localProperties.getProperty('OPEN_EXCHANGE_API_KEY')
+        buildConfigField "String", "OPEN_EXCHANGE_SERVICE_KEY", "\"${apiKey}\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
