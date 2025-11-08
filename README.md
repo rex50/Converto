@@ -1,9 +1,24 @@
 # 💹 Converto
+
+[![CI/CD](https://github.com/rex50/Converto/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rex50/Converto/actions/workflows/ci-cd.yml)
+[![Release](https://img.shields.io/github/v/release/rex50/Converto)](https://github.com/rex50/Converto/releases)
+[![License](https://img.shields.io/github/license/rex50/Converto)](LICENSE)
+
 A simple app for currency conversion which uses [Open Exchange Rates (free account)](https://openexchangerates.org/)
 
 | Splash | Home | Converion |
 |--------|------|-----------|
 | ![Splash](media/app_logo_splash.png) | ![Home](media/home_initial.png) | ![Conversion](media/home_with_data.png) |
+
+## 🚀 CI/CD Pipeline
+
+This project includes an automated CI/CD pipeline that:
+- ✅ Runs unit tests on every push
+- 📦 Builds APK automatically
+- 📝 Generates changelog from commits
+- 🎉 Creates releases with downloadable APK
+
+[View Setup Instructions](SETUP_GUIDE.md)
 
 ### 👷‍♂️ Architecture 
 This project follows MVVM (clean architecture) which increases code testability and quality. As this is a small project, I've skipped the UseCase layer (beneficial for large projects with many screens and use-cases). Hilt library is used for dependency injection which helps achieving dependency inversion.
