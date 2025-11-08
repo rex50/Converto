@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 def localPropertiesFile() {
@@ -57,6 +57,14 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    
+    applicationVariants.all { variant ->
+        kotlin.sourceSets {
+            getByName(variant.name) {
+                kotlin.srcDir("${buildDir}/generated/ksp/${variant.name}/kotlin")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -84,7 +92,7 @@ dependencies {
 
     // Hilt - Dependency Injection
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    ksp "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Hilt for Compose
     implementation "androidx.hilt:hilt-navigation-compose:1.1.0-alpha01"
@@ -94,7 +102,7 @@ dependencies {
 
     // Hilt with Work Manager
     implementation "androidx.hilt:hilt-work:$hilt_worker_version"
-    kapt "androidx.hilt:hilt-compiler:$hilt_worker_version"
+    ksp "androidx.hilt:hilt-compiler:$hilt_worker_version"
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
