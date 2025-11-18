@@ -1,5 +1,8 @@
+# Android CI/CD Pipeline for Converto App
+# This workflow automates testing, building, and releasing the Android application
 name: Android CI/CD Pipeline
 
+# Trigger conditions: Run on pushes and pull requests to main branch
 on:
   push:
     branches:
@@ -13,11 +16,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Clone the repository code
+      # fetch-depth: 0 ensures we get complete git history for changelog generation
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Full history for changelog generation
 
+      # Step 2: Install Java Development Kit (JDK) 17
+      # Required for building Android applications
+      # Uses Temurin distribution and caches Gradle dependencies
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -25,9 +33,14 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      # Step 3: Make Gradle wrapper executable
+      # Required on Unix-based systems to run Gradle commands
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # Step 4: Cache Gradle dependencies
+      # Speeds up subsequent builds by reusing downloaded dependencies
+      # Cache key is based on Gradle files content for automatic invalidation
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -38,15 +51,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Create local.properties
-        run: |
-          echo "OPEN_EXCHANGE_API_KEY=${{ secrets.OPEN_EXCHANGE_API_KEY }}" > local.properties
-
+      # Step 5: Execute unit tests
+      # Runs all unit tests to ensure code quality
+      # Uses environment variable for API key access during tests
       - name: Run Unit Tests
         env:
           OPEN_EXCHANGE_SERVICE_KEY: ${{ secrets.OPEN_EXCHANGE_API_KEY }}
         run: ./gradlew test
 
+      # Step 6: Generate and publish test results
+      # Creates a detailed test report visible in the GitHub Actions UI
+      # Runs even if previous steps fail (if: always())
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
         if: always()
@@ -55,11 +70,16 @@ jobs:
           detailed_summary: true
           include_passed: true
 
+      # Step 7: Build the debug APK
+      # Creates an installable Android application package
       - name: Build Debug APK
         env:
           OPEN_EXCHANGE_SERVICE_KEY: ${{ secrets.OPEN_EXCHANGE_API_KEY }}
         run: ./gradlew assembleDebug
 
+      # Step 8: Extract version information from build.gradle
+      # Reads versionName and versionCode to use in release naming
+      # Outputs are used in subsequent steps for tagging and file naming
       - name: Get version name
         id: version
         run: |
@@ -69,6 +89,9 @@ jobs:
           echo "code=${VERSION_CODE}" >> $GITHUB_OUTPUT
           echo "tag=v${VERSION_NAME}-${VERSION_CODE}" >> $GITHUB_OUTPUT
 
+      # Step 9: Generate changelog from git history
+      # Creates a list of changes since the last release tag
+      # If no previous tag exists, includes all commits
       - name: Generate Changelog
         id: changelog
         run: |
@@ -92,13 +115,19 @@ jobs:
           echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${LATEST_TAG}...v${{ steps.version.outputs.name }}-${{ steps.version.outputs.code }}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      # Step 10: Upload APK as a workflow artifact
+      # Makes the APK downloadable from the Actions tab
+      # Retained for 30 days for easy access
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-${{ steps.version.outputs.tag }}
           path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+          retention-days: 90
 
+      # Step 11: Create a GitHub Release
+      # Only runs on pushes to main branch (not on pull requests)
+      # Creates a new release with version tag and changelog
       - name: Create GitHub Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: create_release
@@ -124,6 +153,9 @@ jobs:
           draft: false
           prerelease: false
 
+      # Step 12: Attach APK to the GitHub Release
+      # Only runs on pushes to main branch (not on pull requests)
+      # Uploads the built APK as a downloadable release asset
       - name: Upload APK to Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-release-asset@v1
@@ -134,4 +166,3 @@ jobs:
           asset_path: app/build/outputs/apk/debug/app-debug.apk
           asset_name: Converto-${{ steps.version.outputs.tag }}.apk
           asset_content_type: application/vnd.android.package-archive
-
